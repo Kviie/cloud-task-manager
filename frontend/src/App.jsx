@@ -41,7 +41,30 @@ function App() {
     fetchTasks();
   };
 
+  const deleteTask = async (id) => {
+    await fetch(`${API_URL}${id}/`, {
+      method: "DELETE",
+    });
+
+    fetchTasks();
+  };
+
+  const updateTaskStatus = async (id, status) => {
+    await fetch(`${API_URL}${id}/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+      status,
+      }),
+    });
+
+    fetchTasks();
+  };
+
   return (
+
     <div>
       <h1>Cloud Task Manager</h1>
 
@@ -69,7 +92,24 @@ function App() {
         <div key={task.id}>
           <h3>{task.title}</h3>
           <p>{task.description}</p>
-          <p>Status: {task.status}</p>
+
+          <label>
+  Status:{" "}
+  <select
+    value={task.status}
+    onChange={(event) =>
+      updateTaskStatus(task.id, event.target.value)
+    }
+  >
+    <option value="TODO">To Do</option>
+    <option value="IN_PROGRESS">In Progress</option>
+    <option value="DONE">Done</option>
+  </select>
+</label>
+
+          <button onClick={() => deleteTask(task.id)}>
+            Delete
+          </button>
         </div>
       ))}
     </div>
